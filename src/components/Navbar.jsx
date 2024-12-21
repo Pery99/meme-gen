@@ -3,9 +3,21 @@ import { FaGithub, FaTwitter, FaInstagram } from 'react-icons/fa';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 
 const socialLinks = [
-  { icon: <FaGithub className="text-xl" />, url: 'https://github.com', label: 'Github' },
-  { icon: <FaTwitter className="text-xl" />, url: 'https://twitter.com', label: 'Twitter' },
-  { icon: <FaInstagram className="text-xl" />, url: 'https://instagram.com', label: 'Instagram' },
+  {
+    icon: <FaGithub className="text-xl" />,
+    url: "https://github.com/pery99",
+    label: "Github",
+  },
+  {
+    icon: <FaTwitter className="text-xl" />,
+    url: "https://x.com/theoluwa_pelumi",
+    label: "Twitter",
+  },
+  {
+    icon: <FaInstagram className="text-xl" />,
+    url: "https://instagram.com",
+    label: "Instagram",
+  },
 ];
 
 function Navbar() {
