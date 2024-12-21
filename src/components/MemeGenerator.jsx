@@ -1,5 +1,6 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, Suspense, lazy } from "react";
 import html2canvas from 'html2canvas';
+import LoadingSpinner from './LoadingSpinner';
 
 const predefinedMemes = [
   {
@@ -40,20 +41,45 @@ function MemeGenerator() {
   const [bottomText, setBottomText] = useState("");
   const [error, setError] = useState("");
   const [showMemeSelector, setShowMemeSelector] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef();
   const memeRef = useRef();
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
       if (file.type.match('image.*')) {
-        const reader = new FileReader();
-        reader.onload = (e) => setSelectedImage(e.target.result);
-        reader.readAsDataURL(file);
-        setError("");
+        setIsLoading(true);
+        try {
+          const compressedImage = await compressImage(file);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            setSelectedImage(e.target.result);
+            setIsLoading(false);
+          };
+          reader.readAsDataURL(compressedImage);
+          setError("");
+        } catch (err) {
+          setError("Error processing image");
+          setIsLoading(false);
+        }
       } else {
         setError("Please upload an image file");
       }
+    }
+  };
+
+  const compressImage = async (file) => {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true
+    };
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      throw new Error('Image compression failed');
     }
   };
 
@@ -183,6 +209,12 @@ function MemeGenerator() {
           >
             Download Meme
           </button>
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <LoadingSpinner />
         </div>
       )}
     </div>
